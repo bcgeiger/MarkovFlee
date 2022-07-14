@@ -499,6 +499,9 @@ class Ecosystem:
             self.num_arrivals = []  # one element per time step.
             self.travel_durations = []  # one element per time step.
 
+        # initialize dynamic programming memory
+        self.dp = {}
+
     def get_camp_names(self):
         camp_names = []
         for l in self.locations:
@@ -1054,6 +1057,12 @@ class Ecosystem:
         '''
         Computes all routes of length MaxMoveSpeed between locations
         '''
+
+        # Check if already computed
+        if (location,budge) in self.dp:
+            # return the precomputed value
+            return self.dp[(location,budget)]
+
         endpoints = [location]
         probs = [1 - location.movechance]
         affecting_camps = []
@@ -1085,5 +1094,7 @@ class Ecosystem:
             else:
                 u_probs.append(probs[ind])
                 u_endpoints.append(endpoints[ind])
-
-        return u_endpoints, u_probs, np.array(list(set(affecting_camps)))
+        affecting_camps_arr = np.array(list(set(affecting_camps)))
+        # store the computed values for later calls
+        self.dp[(location,budget)] = [u_endpoints, u_probs, affecting_camps_arr]
+        return u_endpoints, u_probs, affecting_camps_arr
