@@ -174,7 +174,7 @@ if __name__ == "__main__":
       print(output)
       df = np.append(df, [refugees_in_camps_sim], axis=0)
 
-    np.savetxt(path+'results_ssudan_{}_{}'.format(locations,run), df, delimiter=';')
+    np.savetxt(path+'results_ssudan_{}_{}_dp'.format(locations,run), df, delimiter=';')
 
   print(time.time() - tic)
-  np.savetxt(path+'time_ssudan_{}'.format(locations), np.asarray([time.time() - tic]))
+  np.savetxt(path+'time_ssudan_{}_dp'.format(locations), np.asarray([time.time() - tic]))

@@ -19,8 +19,9 @@ if __name__ == "__main__":
 
   end_time = 100
 
-  locations_list=[True,False]
-  factors=[1,2,5,10,20,50,100,200,1000]
+  locations_list=[True]
+  # factors=[1000,200,50,10,20,5,100,2,1]
+  factors=[200]
   runs=25
   large=True
 
@@ -108,6 +109,6 @@ if __name__ == "__main__":
 
           df=np.append(df,[[run,t,l1.numAgents+l2.numAgents+l3.numAgents+l4.numAgents, l1.numAgents, l2.numAgents, l3.numAgents, l4.numAgents, l5.numAgents, l6.numAgents, l7.numAgents]],axis=0)
 
-      np.savetxt(path+'time_{}_{}_{}'.format(locations,factor,runs),np.asarray([time.time()-tic]))
+      np.savetxt(path+'time_{}_{}_{}_dp_new'.format(locations,factor,runs),np.asarray([time.time()-tic]))
       print(time.time()-tic)
-      np.savetxt(path+'results_{}_{}_{}'.format(locations,factor,runs),df,delimiter=';')
+      np.savetxt(path+'results_{}_{}_{}_dp_new'.format(locations,factor,runs),df,delimiter=';')

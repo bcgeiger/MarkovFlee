@@ -257,9 +257,7 @@ class Location:
 
         # Automatically tags a location as a Camp if refugees are less than 2% likely to move out on a given day.
         if self.movechance < 0.02 and not self.camp:
-            print(
-                "Warning: automatically setting location %s to camp, as movechance = %s" % (self.name, self.movechance),
-                file=sys.stderr)
+            print("Warning: automatically setting location %s to camp, as movechance = %s" % (self.name, self.movechance),file=sys.stderr)
             self.camp = True
             self.town = False
 
@@ -917,6 +915,7 @@ class Ecosystem:
 
         # here the full table of journeys will be recomputed
         if refresh_journey_probs:
+            self.dp={}
             print('Recomputing journey probabilities')
             for l in self.locations:
                 l.affected_locations=[]  # reset all camp effects
@@ -936,16 +935,21 @@ class Ecosystem:
             for loc_ind in range(len(l.journey_endpoints)):
                 l.journey_endpoints[loc_ind].IncrementArrivingAgents(dummy[loc_ind])
             l.SetNumAgents(0)
-
+	
+        dummy_list=[]
         for l in self.locations:
             l.SetNumAgents(l.numArrivingAgents)
             l.numArrivingAgents = 0
             if l.getCapMultiplier(0) != 1.0:  # here we recompute the journeys and their probabilities for just a small set of locations
                 print('Recompute some journey probabilities due to camp capacities')
-                for ll in l.affected_locations:
-                    new_endpoints, probs, affecting_camps = self.computeRoutes(ll, SimulationSettings.MaxMoveSpeed)
-                    ll.journey_endpoints = new_endpoints
-                    ll.journey_probs = probs
+                # self.dp={}
+                self.dp={k: v for k, v in self.dp.items() if k[0] not in l.affected_locations}
+                dummy_list+=l.affected_locations
+
+        for ll in dummy_list:
+            new_endpoints, probs, affecting_camps = self.computeRoutes(ll, SimulationSettings.MaxMoveSpeed)
+            ll.journey_endpoints = new_endpoints
+            ll.journey_probs = probs
 
         # update link properties
         if SimulationSettings.CampLogLevel > 0:
@@ -1059,7 +1063,7 @@ class Ecosystem:
         '''
 
         # Check if already computed
-        if (location,budge) in self.dp:
+        if (location,budget) in self.dp:
             # return the precomputed value
             return self.dp[(location,budget)]
 
