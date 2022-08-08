@@ -943,7 +943,7 @@ class Ecosystem:
             if l.getCapMultiplier(0) != 1.0:  # here we recompute the journeys and their probabilities for just a small set of locations
                 print('Recompute some journey probabilities due to camp capacities')
                 self.dp={}
-                # self.dp={k: v for k, v in self.dp.items() if k[0] not in l.affected_locations}
+                # self.dp={k: v for k, v in self.dp.items() if k[0] not in l.affected_locations}  # This may be a little bit faster, but probably not by much
                 dummy_list+=l.affected_locations
 
         for ll in dummy_list:
