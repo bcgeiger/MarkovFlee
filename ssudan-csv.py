@@ -22,7 +22,7 @@ def date_to_sim_days(date):
 if __name__ == "__main__":
 
   locations=True
-  runs=5
+  runs=1
 
   path='Results_Sudan/'
   os.makedirs(path, exist_ok=True)
