@@ -915,8 +915,7 @@ class Ecosystem:
 
         # here the full table of journeys will be recomputed
         if refresh_journey_probs:
-            self.dp={}
-            print('Recomputing journey probabilities')
+            print('Recomputing journey probabilities', file=sys.stderr)
             for l in self.locations:
                 l.affected_locations=[]  # reset all camp effects
 
