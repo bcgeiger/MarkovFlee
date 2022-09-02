@@ -938,7 +938,7 @@ class Ecosystem:
             l.SetNumAgents(l.numArrivingAgents)
             l.numArrivingAgents = 0
             if l.getCapMultiplier(0) != 1.0:  # here we recompute the journeys and their probabilities for just a small set of locations
-                print('Recompute some journey probabilities due to camp capacities')
+                print('Recompute some journey probabilities due to camp capacities', file=sys.stderr)
                 for ll in l.affected_locations:
                     new_endpoints, probs, affecting_camps = self.computeRoutes(ll, SimulationSettings.MaxMoveSpeed)
                     ll.journey_endpoints = new_endpoints
