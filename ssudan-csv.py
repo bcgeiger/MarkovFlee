@@ -21,8 +21,8 @@ def date_to_sim_days(date):
 
 if __name__ == "__main__":
 
-  locations=True
-  runs=1
+  locations=True  # MarkovFlee: If this flag is set to TRUE, then MarkovFlee will be used instead of Flee
+  runs=5
 
   path='Results_Sudan/'
   os.makedirs(path, exist_ok=True)
@@ -103,11 +103,11 @@ if __name__ == "__main__":
     refugee_debt = 0
     refugees_raw = 0 #raw (interpolated) data from TOTAL UNHCR refugee count only.
 
-    refresh_probs = True
+    refresh_probs = True  # MarkovFlee requires a flag to update journey probabilities (e.g., when the graph changes)
 
     for t in range(0,end_time):
 
-      conflict_flag=ig.AddNewConflictZones(e,t)
+      conflict_flag=ig.AddNewConflictZones(e,t)  # MarkovFlee updates journey probabilities if the graph changes
 
       # Determine number of new refugees to insert into the system.
       new_refs = d.get_daily_difference(t, FullInterpolation=True) - refugee_debt
@@ -118,14 +118,14 @@ if __name__ == "__main__":
       elif refugee_debt > 0:
         refugee_debt = 0
 
-      # Insert refugee agents
+      # Main iteration: If locations=TRUE, MarkovFlee is called
       if locations:
         agents_list = np.random.multinomial(new_refs,pvals=e.conflict_weights/e.conflict_pop)
         for ind in range(len(e.conflict_zones)):
           e.locations[ind].IncrementNumAgents(agents_list[ind])
-        e.refresh_conflict_weights() # Maybe here is a problem???
+        e.refresh_conflict_weights()
         t_data = t
-        closure_flag=e.enact_border_closures(t) #
+        closure_flag=e.enact_border_closures(t)  # MarkovFlee updates journey probabilities if routes change
         refresh_probs=e.evolveLocations(refresh_probs + conflict_flag + closure_flag)
       else:
         e.add_agents_to_conflict_zones(new_refs)
@@ -174,7 +174,8 @@ if __name__ == "__main__":
       print(output)
       df = np.append(df, [refugees_in_camps_sim], axis=0)
 
-    np.savetxt(path+'results_ssudan_{}_{}'.format(locations,run), df, delimiter=';')
+    np.savetxt(path+'results_ssudan_{}_{}_dp_moremovement'.format(locations,run), df, delimiter=';')
+
 
   print(time.time() - tic, file=sys.stderr)
-  np.savetxt(path+'time_ssudan_{}'.format(locations), np.asarray([time.time() - tic]))
+  np.savetxt(path+'time_ssudan_{}_dp_moremovement'.format(locations), np.asarray([time.time() - tic]))
