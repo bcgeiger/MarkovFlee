@@ -176,5 +176,6 @@ if __name__ == "__main__":
 
     np.savetxt(path+'results_ssudan_{}_{}_dp_moremovement'.format(locations,run), df, delimiter=';')
 
-  print(time.time() - tic)
+
+  print(time.time() - tic, file=sys.stderr)
   np.savetxt(path+'time_ssudan_{}_dp_moremovement'.format(locations), np.asarray([time.time() - tic]))
