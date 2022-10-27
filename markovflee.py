@@ -27,7 +27,8 @@ if __name__ == "__main__":
   locations=True  # MarkovFlee: If this flag is set to TRUE, then MarkovFlee will be used instead of Flee
   runs=1
 
-  config = sys.argv[1]
+  #config = sys.argv[1]
+  config = 'car'
   path=('examples/{0}'.format(config))
 
   input_csv_directory = ("{}/input_csv".format(path))
@@ -103,6 +104,7 @@ if __name__ == "__main__":
             e.locations[ind].IncrementNumAgents(agents_list[ind])
             if SimulationSettings.TakeRefugeesFromPopulation:
               e.locations[ind].pop-=agents_list[ind]
+              e.locations[ind].pop=max(0,e.locations[ind].pop)
           e.refresh_conflict_weights()
           t_data = t
           closure_flag=e.enact_border_closures(t)  # MarkovFlee updates journey probabilities if routes change
