@@ -28,7 +28,7 @@ if __name__ == "__main__":
   runs=1
 
   #config = sys.argv[1]
-  config = 'car'
+  config = 'mali'
   path=('examples/{0}'.format(config))
 
   input_csv_directory = ("{}/input_csv".format(path))
