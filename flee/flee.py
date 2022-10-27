@@ -941,28 +941,16 @@ class Ecosystem:
             l.SetNumAgents(l.numArrivingAgents)
             l.numArrivingAgents = 0
             if l.getCapMultiplier(0) != 1.0:  # here we recompute the journeys and their probabilities for just a small set of locations
-                print('Recompute some journey probabilities due to camp capacities', file=sys.stderr)
+                print('Recompute some journey probabilities due to camp capacities at {}'.format(l.name), file=sys.stderr)
                 self.dp={}
                 # self.dp={k: v for k, v in self.dp.items() if k[0] not in l.affected_locations}  # This may be a little bit faster, but probably not by much
                 dummy_list+=l.affected_locations
 
-        if dummy_list!=[]:
-            self.dp = {}
-            print('Recomputing journey probabilities', file=sys.stderr)
-            for l in self.locations:
-                l.affected_locations=[]  # reset all camp effects
 
-            for l in self.locations:
-                new_endpoints, probs, affecting_camps = self.computeRoutes(l, SimulationSettings.MaxMoveSpeed)
-                l.journey_endpoints=new_endpoints
-                l.journey_probs=probs
-                for camp in affecting_camps:
-                    camp.affected_locations.append(l)
-
-      #  for ll in dummy_list:
-       #     new_endpoints, probs, affecting_camps = self.computeRoutes(ll, SimulationSettings.MaxMoveSpeed)
-        #    ll.journey_endpoints = new_endpoints
-         #   ll.journey_probs = probs
+        for ll in dummy_list:
+            new_endpoints, probs, affecting_camps = self.computeRoutes(ll, SimulationSettings.MaxMoveSpeed)
+            ll.journey_endpoints = new_endpoints
+            ll.journey_probs = probs
 
         # update link properties
         if SimulationSettings.CampLogLevel > 0:
@@ -1086,9 +1074,9 @@ class Ecosystem:
 
         if location.movechance > 0:
             for ind, link in enumerate(location.links):
+                if link.endpoint.capacity > 0:  # in this case, the capacity of this link will be used for future weights
+                    affecting_camps = np.append(affecting_camps, link.endpoint)
                 if link.distance < budget:
-                    if link.endpoint.capacity > 0: # in this case, the capacity of this link will be used for future weights
-                        affecting_camps=np.append(affecting_camps,link.endpoint)
 
                     next_endpoints, next_probs, next_camps = self.computeRoutes(link.endpoint,
                                                                     budget - link.distance)  # if you move further...
