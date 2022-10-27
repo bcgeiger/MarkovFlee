@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import os as os
 import outputanalysis.analysis as a
+import markovflee
 
 """
 Generation 1 code. Incorporates only distance, travel always takes one day.

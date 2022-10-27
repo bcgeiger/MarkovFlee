@@ -1,6 +1,6 @@
 from flee import flee
-from flee.datamanager import handle_refugee_data, read_period
-from flee.datamanager import DataTable  # DataTable.subtract_dates()
+from datamanager import handle_refugee_data, read_period
+from datamanager import DataTable  # DataTable.subtract_dates()
 from flee import InputGeography
 import numpy as np
 import outputanalysis.analysis as a
@@ -8,6 +8,7 @@ import sys
 import csv
 import time
 import os as os
+from flee.SimulationSettings import SimulationSettings
 
 # To run this script, please put it in the root directory of MarkovFlee and simply write the following command: 
 # -------------------  pyhton3 markovflee.py <name of the conflict> ------------------------------------------
@@ -100,16 +101,22 @@ if __name__ == "__main__":
           agents_list = np.random.multinomial(new_refs,pvals=e.conflict_weights/e.conflict_pop)
           for ind in range(len(e.conflict_zones)):
             e.locations[ind].IncrementNumAgents(agents_list[ind])
+            if SimulationSettings.TakeRefugeesFromPopulation:
+              e.locations[ind].pop-=agents_list[ind]
           e.refresh_conflict_weights()
           t_data = t
           closure_flag=e.enact_border_closures(t)  # MarkovFlee updates journey probabilities if routes change
           refresh_probs=e.evolveLocations(refresh_probs + conflict_flag + closure_flag)
+          total_num_agents=0
+          for l in e.locations:
+            total_num_agents+=l.numAgents
         else:
           e.add_agents_to_conflict_zones(new_refs)
           e.refresh_conflict_weights()
           t_data = t
           e.enact_border_closures(t)
           e.evolve()
+          total_num_agents = e.numAgents()
 
 
         # Calculation of error terms
@@ -141,7 +148,7 @@ if __name__ == "__main__":
 
 
         if refugees_raw>0:
-          output += ",%s,%s,%s,%s,%s,%s" % (float(np.sum(abs_errors))/float(refugees_raw), int(sum(loc_data)), e.numAgents(), refugees_raw, sum(refugees_in_camps_sim), refugee_debt)
+          output += ",%s,%s,%s,%s,%s,%s" % (float(np.sum(abs_errors))/float(refugees_raw), int(sum(loc_data)), total_num_agents, refugees_raw, sum(refugees_in_camps_sim), refugee_debt)
         else:
           output += ",0,0,0,0,0,0"
 
